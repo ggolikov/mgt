@@ -1,4 +1,6 @@
-var atd = {
+import type { FeatureCollection } from 'geojson';
+
+const atd: FeatureCollection = {
 	type: 'FeatureCollection',
 	features: [
 		{

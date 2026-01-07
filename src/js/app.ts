@@ -1,5 +1,5 @@
 import type { FeatureCollection, Feature } from 'geojson';
-import Mgt from '../../src/index';
+import Mgt from './mgt';
 import rings from './data/rings.json';
 
 declare const L: any;
@@ -34,7 +34,7 @@ const ringNames: RingName[] = [
 
 const state: { rings: RingsState } = {
   rings: ringNames.reduce((prev, cur) => {
-    const feature = (rings as FeatureCollection).features.find(
+    const feature = (rings as FeatureCollection).features?.find(
       (f) => f.properties && f.properties.name === cur,
     );
 
