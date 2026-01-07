@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { FeatureCollection } from 'geojson';
-import type { RingName, ComparePoint, RingsState, ComparePointsState } from './types';
+import type { RingName, ComparePoint, RingsState, ComparePointsState, CompareCirclesState } from './types';
 import rings from './data/rings.json';
 import { RING_NAMES } from './constants';
 import Mgt from '../mgt';
@@ -8,6 +8,7 @@ import Mgt from '../mgt';
 interface AppState {
   rings: RingsState;
   comparePoints: ComparePointsState;
+  compareCircles: CompareCirclesState;
   map: any | null;
   mgt: Mgt | null;
   
@@ -18,6 +19,7 @@ interface AppState {
   removeRingLayer: (ringName: RingName) => void;
   setComparePointLayer: (type: ComparePoint, layer: any) => void;
   removeComparePointLayer: (type: ComparePoint) => void;
+  setCompareCirclesData: () => void;
   clearAllLayers: () => void;
 }
 
@@ -40,9 +42,17 @@ const initialComparePointsState: ComparePointsState = {
   to: { layer: null },
 };
 
+const initialCompareCirclesState: CompareCirclesState = {
+  straight: { layer: null },
+  reverse: { layer: null },
+  middleLine: { layer: null },
+};
+
+
 export const useAppStore = create<AppState>((set, get) => ({
   rings: initialRingsState,
   comparePoints: initialComparePointsState,
+  compareCircles: initialCompareCirclesState,
   map: null,
   mgt: null,
 
@@ -84,6 +94,14 @@ export const useAppStore = create<AppState>((set, get) => ({
         [type]: { layer },
       },
     })),
+  
+  setCompareCirclesData: (layers) => 
+    set((state) => ({
+      compareCircles: {
+        ...state.compareCircles,
+        ...layers,
+        }
+      })),
 
   removeComparePointLayer: (type) => {
     const state = get();
@@ -107,6 +125,23 @@ export const useAppStore = create<AppState>((set, get) => ({
         state.map.removeLayer(layer);
       }
     });
+
+    if (state.comparePoints.from.layer) {
+      state.map.removeLayer(state.comparePoints.from.layer);
+    }
+    if (state.comparePoints.to.layer) {
+      state.map.removeLayer(state.comparePoints.to.layer);
+    }
+    if (state.compareCircles.straight.layer) {
+      state.map.removeLayer(state.compareCircles.straight.layer);
+    }
+    if (state.compareCircles.reverse.layer) {
+      state.map.removeLayer(state.compareCircles.reverse.layer);
+    }
+    if (state.compareCircles.middleLine.layer) {
+      state.map.removeLayer(state.compareCircles.middleLine.layer);
+    }
+
     set((state) => ({
       rings: RING_NAMES.reduce(
         (acc, ringName) => ({
@@ -115,6 +150,8 @@ export const useAppStore = create<AppState>((set, get) => ({
         }),
         {} as RingsState,
       ),
+      comparePoints: initialComparePointsState,
+      compareCircles: initialCompareCirclesState,
     }));
   },
 }));

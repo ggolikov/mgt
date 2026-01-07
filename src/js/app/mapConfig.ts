@@ -1,8 +1,5 @@
-import type { RingName, ComparePoint } from './types';
 import { useAppStore } from './store';
 import { drawBufferFromRing, drawComparePoint } from './mapActions';
-
-declare const L: any;
 
 export function createMapOptions() {
   return {

@@ -7,7 +7,7 @@ type PolygonLike = PolygonGeometry | PolygonFeature;
 
 type PointFeature = turf.Feature<turf.Point>;
 
-interface LatLngLike {
+export interface LatLngLike {
   lat: number;
   lng: number;
 }
@@ -89,7 +89,7 @@ export default class Mgt {
     return distance;
   }
 
-  public getBufferAtPoint(latLng: LatLngLike, geoJson: PolygonLike): turf.Feature {
+  public static getBufferAtPoint(latLng: LatLngLike, geoJson: PolygonLike): turf.Feature {
     const point = turf.point([latLng.lng, latLng.lat]) as PointFeature;
     const distance = Mgt.distanceToPolygon({ point, polygon: geoJson });
 
@@ -97,6 +97,22 @@ export default class Mgt {
       steps: Mgt.bufferSteps,
     });
   }
+
+  public static getTwoPointsCircles(from: LatLngLike, to: LatLngLike): turf.Feature[] {
+    const fromPoint = turf.point([from.lng, from.lat]) as PointFeature;
+    const toPoint = turf.point([to.lng, to.lat]) as PointFeature;
+
+    const distance = turf.distance(fromPoint, toPoint, { units: 'meters' });
+
+    const straight = turf.circle(fromPoint, distance, { units: 'meters' });
+    const reverse = turf.circle(toPoint, distance, { units: 'meters' });
+
+    // TODO: Draw middle line
+    // const intersection = turf.
+
+    return [straight, reverse];
+  }
+
 }
 
 

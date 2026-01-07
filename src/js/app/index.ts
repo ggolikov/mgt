@@ -3,13 +3,12 @@ import { useAppStore } from './store';
 import { MAP_CENTER, MAP_ZOOM, TILE_URLS } from './constants';
 import { BASE_STYLE, getStrokeColor } from './styles';
 import { createMapOptions } from './mapConfig';
-import type { RingsGeoJson } from './types';
 import Mgt from '../mgt';
 
 declare const L: any;
 
 // Initialize MGT instance
-const mgt = new Mgt();
+const mgt = Mgt;
 
 // Initialize store with map and mgt instances
 const map = L.map('map', createMapOptions()).setView(MAP_CENTER, MAP_ZOOM);
@@ -22,10 +21,9 @@ const baseLayer = L.tileLayer(TILE_URLS[1], {
 
 // Set map and mgt in store
 useAppStore.getState().setMap(map);
-useAppStore.getState().setMgt(mgt);
+useAppStore.getState().setMgt(Mgt);
 
-// Add rings to map
-L.geoJson(rings as RingsGeoJson, {
+L.geoJson(rings, {
   style: (feature: any) => ({
     ...BASE_STYLE,
     color: getStrokeColor(feature.properties.name),

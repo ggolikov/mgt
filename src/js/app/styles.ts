@@ -24,3 +24,5 @@ export function getStrokeColor(ringName: RingName): string {
       return '#000000';
   }
 }
+
+export const CIRCLE_COLOR = '#00FFFF';
