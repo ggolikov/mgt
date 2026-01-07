@@ -3,30 +3,17 @@
 	"version": "0.1.0",
 	"description": "",
 	"repository": "https://github.com/ggolikov/mgt",
-	"main": "./src/index.js",
+	"main": "./src/index.ts",
 	"author": "Grigory Golikov gr.golikov@gmail.com",
 	"license": "MIT",
 	"scripts": {
-		"watch": "watchify -v -d demo/js/app.js -o demo/js/bundle.js",
-		"lint": "eslint ./src/L.TileLayer.Vintage.js",
-		"build-js": "cat ./src/index.js > ./dist/index.js",
-		"compress": "uglifyjs ./dist/index.js -o ./index.js -m --comments",
-		"server": "live-server --open=/demo/ --port=9000 --host=localhost --watch=demo",
-		"start": "npm-run-all --parallel watch server",
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"lint": "eslint ./src/index.ts",
+		"start": "vite",
+		"ts-check": "npx tsc",
 		"deploy": "gh-pages -d demo"
-	},
-	"browserify": {
-		"transform": [
-			"glslify",
-			[
-				"babelify",
-				{
-					"presets": [
-						"@babel/preset-env"
-					]
-				}
-			]
-		]
 	},
 	"dependencies": {
 		"@turf/turf": "^6.5.0",
@@ -36,13 +23,9 @@
 	"devDependencies": {
 		"@babel/core": "^7.2.2",
 		"@babel/preset-env": "^7.2.3",
-		"babelify": "^10.0.0",
-		"browserify": "^13.1.1",
 		"eslint": "^4.19.1",
 		"gh-pages": "^1.0.0",
-		"live-server": "^1.2.0",
-		"npm-run-all": "^4.0.1",
-		"uglifyjs": "^2.4.10",
-		"watchify": "^3.7.0"
+		"typescript": "^5.4.0",
+		"vite": "^7.3.0"
 	}
 }
