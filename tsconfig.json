@@ -16,7 +16,7 @@
     "src/**/js/app.ts",
     "src/**/js/mgt.ts",
     "src/**/js/data/*.ts"
-  ]
+, "src/js/mgt/index.ts"  ]
 }
 
 
