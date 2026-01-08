@@ -86,12 +86,22 @@ export function drawComparePoint(
                         dashArray: '10',
                     }),
                 }),
+            },
+            middleLine: {
+                layer: L.geoJson(features[2], {
+                    style: () => ({
+                        ...BASE_STYLE,
+                        color: CIRCLE_COLOR,
+                        dashArray: '10',
+                    }),
+                }),
             }
         };
 
         layers.straight.layer.addTo(store.map);
         layers.reverse.layer.addTo(store.map);
-
+        layers.middleLine.layer.addTo(store.map);
+        
         store.setCompareCirclesData(layers);
     }
 }

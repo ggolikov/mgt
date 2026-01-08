@@ -107,10 +107,17 @@ export default class Mgt {
     const straight = turf.circle(fromPoint, distance, { units: 'meters' });
     const reverse = turf.circle(toPoint, distance, { units: 'meters' });
 
+    const intersection = turf.lineIntersect(straight, reverse);
+
+    const middleLine = turf.lineString(intersection.features.map(f => f.geometry.coordinates));
+    
+    console.log(middleLine);
+    
+
     // TODO: Draw middle line
     // const intersection = turf.
 
-    return [straight, reverse];
+    return [straight, reverse, middleLine];
   }
 
   public static getReflectionPoint(latLng: LatLngLike, origin: LatLngLike): LatLngLike {

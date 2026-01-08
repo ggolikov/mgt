@@ -21,7 +21,7 @@ interface AppState {
   removeRingLayer: (ringName: RingName) => void;
   setComparePointLayer: (type: ComparePoint, layer: any) => void;
   removeComparePointLayer: (type: ComparePoint) => void;
-  setCompareCirclesData: () => void;
+  setCompareCirclesData: (layers: any) => void;
   setReflectionPoint: () => void;
   setCrossLines: (layers: any) => void;
   clearAllLayers: () => void;
