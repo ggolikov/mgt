@@ -1,8 +1,9 @@
 import type { RingName, ComparePoint } from './types';
 import { useAppStore } from './store';
 import { getStrokeColor, BASE_STYLE, CIRCLE_COLOR } from './styles';
-import { LatLngLike } from '../mgt';
+import Mgt, { LatLngLike } from '../mgt';
 import { MOSCOW_CENTER } from './constants';
+import rings from './data/rings.json';
 
 declare const L: any;
 
@@ -16,7 +17,7 @@ export function drawBufferFromRing(
     return;
   }
 
-  const json = store.mgt.getBufferAtPoint(e.latlng, ringFeature);
+  const json = Mgt.getBufferAtPoint(e.latlng, ringFeature);
 
   if (store.rings[ringName].layer) {
     store.removeRingLayer(ringName);
@@ -39,11 +40,12 @@ export function drawComparePoint(
     e: { latlng: { lat: number; lng: number } },
 ): void {
     const store = useAppStore.getState();
-    const existingLayer = store.comparePoints[type].layer;
-
+    
     if (!store.map) {
         return;
     }
+
+    const existingLayer = store.comparePoints[type].layer;
 
     if (existingLayer) {
         store.map.removeLayer(existingLayer);
@@ -64,7 +66,7 @@ export function drawComparePoint(
     }
 
     if (from && to) {
-        const features = store.mgt.getTwoPointsCircles(from, to);
+        const features = Mgt.getTwoPointsCircles(from, to);
 
         const layers = {
             straight: {
@@ -97,9 +99,56 @@ export function drawComparePoint(
 export function drawReflectionPoint(e: { latlng: { lat: number; lng: number } }): void {
     const store = useAppStore.getState();
 
-    const reflectionPoint = store.mgt.getReflectionPoint(e.latlng, L.latLng(MOSCOW_CENTER));
+    const reflectionPoint = Mgt.getReflectionPoint(e.latlng, L.latLng(MOSCOW_CENTER));
     
     const layer = L.marker([reflectionPoint.lat, reflectionPoint.lng]).addTo(store.map);
 
     store.setReflectionPoint(layer);
+}
+
+export function drawCrossLines(e: { latlng: { lat: number; lng: number } }): void {
+    const store = useAppStore.getState();
+
+    const parallelLayer = store.crossLines.parallel.layer;
+
+    if (parallelLayer) {
+        store.map.removeLayer(parallelLayer);
+    }
+
+    const meridianLayer = store.crossLines.meridian.layer;
+
+    if (meridianLayer) {
+        store.map.removeLayer(meridianLayer);
+    }
+
+    const mkad = (rings as FeatureCollection).features?.find(
+        (f) => f.properties && f.properties.name === 'MKAD',
+      );
+    const crossLines = Mgt.clipFeatures(Mgt.getCrossLines(e.latlng), mkad);
+    
+    const layers = {
+        parallel: {
+            layer: L.geoJson(crossLines[0], {
+                style: () => ({
+                    ...BASE_STYLE,
+                    color: CIRCLE_COLOR,
+                    dashArray: '10',
+                }),
+            }),
+        },
+        meridian: {
+            layer: L.geoJson(crossLines[1], {
+                style: () => ({
+                    ...BASE_STYLE,
+                    color: CIRCLE_COLOR,
+                    dashArray: '10',
+                }),
+            }),
+        }
+    };
+
+    layers.parallel.layer.addTo(store.map);
+    layers.meridian.layer.addTo(store.map);
+
+    store.setCrossLines(layers);
 }

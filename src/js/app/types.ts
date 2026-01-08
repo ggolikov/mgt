@@ -26,3 +26,7 @@ export type CompareCirclesState = {
   reverse: Layer;
   middleLine: Layer;
 };
+export type CrossLinesState = {
+  parallel: Layer;
+  meridian: Layer;
+}

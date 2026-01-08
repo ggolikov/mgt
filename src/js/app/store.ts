@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { FeatureCollection } from 'geojson';
-import type { RingName, ComparePoint, RingsState, ComparePointsState, CompareCirclesState, Layer } from './types';
+import type { RingName, ComparePoint, RingsState, ComparePointsState, CompareCirclesState, Layer, CrossLinesState } from './types';
 import rings from './data/rings.json';
 import { RING_NAMES } from './constants';
 import Mgt from '../mgt';
@@ -10,6 +10,7 @@ interface AppState {
   comparePoints: ComparePointsState;
   compareCircles: CompareCirclesState;
   reflectionPoint: Layer;
+  crossLines: CrossLinesState;
   map: any | null;
   mgt: Mgt | null;
   
@@ -22,6 +23,7 @@ interface AppState {
   removeComparePointLayer: (type: ComparePoint) => void;
   setCompareCirclesData: () => void;
   setReflectionPoint: () => void;
+  setCrossLines: (layers: any) => void;
   clearAllLayers: () => void;
 }
 
@@ -54,11 +56,17 @@ const initialReflectionPointState: Layer = {
   layer: null,
 }
 
+const initialCrossLinesState: CrossLinesState = {
+  parallel: { layer: null },
+  meridian: { layer: null },
+}
+
 export const useAppStore = create<AppState>((set, get) => ({
   rings: initialRingsState,
   comparePoints: initialComparePointsState,
   compareCircles: initialCompareCirclesState,
   reflectionPoint: initialReflectionPointState,
+  crossLines: initialCrossLinesState,
   map: null,
   mgt: null,
 
@@ -129,7 +137,15 @@ export const useAppStore = create<AppState>((set, get) => ({
         ...state.reflectionPoint,
         ...layer,
         }
-      })),
+    })),
+  
+  setCrossLines: (layers) => 
+      set((state) => ({
+        crossLines: {
+          ...state.crossLines,
+          ...layers,
+          }
+        })),
 
   clearAllLayers: () => {
     const state = get();
@@ -158,6 +174,12 @@ export const useAppStore = create<AppState>((set, get) => ({
     if (state.reflectionPoint.layer) {
       state.map.removeLayer(state.reflectionPoint.layer);
     }
+    if (state.crossLines.parallel.layer) {
+      state.map.removeLayer(state.crossLines.parallel.layer);
+    }
+    if (state.crossLines.meridian.layer) {
+      state.map.removeLayer(state.crossLines.meridian.layer);
+    }
 
     set((state) => ({
       rings: RING_NAMES.reduce(
@@ -170,6 +192,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       comparePoints: initialComparePointsState,
       compareCircles: initialCompareCirclesState,
       reflectionPoint: initialReflectionPointState,
+      crossLines: initialCrossLinesState,
     }));
   },
 }));

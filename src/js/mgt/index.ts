@@ -114,8 +114,6 @@ export default class Mgt {
   }
 
   public static getReflectionPoint(latLng: LatLngLike, origin: LatLngLike): LatLngLike {
-    // Calculate symmetrical point: P' = 2*O - P
-    // Where O is origin and P is the point to reflect
     const symmetricalLng = 2 * origin.lng - latLng.lng;
     const symmetricalLat = 2 * origin.lat - latLng.lat;
 
@@ -123,6 +121,45 @@ export default class Mgt {
       lat: symmetricalLat,
       lng: symmetricalLng,
     }
+  }
+
+  public static getCrossLines(latLng: LatLngLike): turf.Feature[] {
+
+    const horizontalLine = turf.lineString([
+      [-180, latLng.lat],
+      [180, latLng.lat],
+    ]);
+
+    const verticalLine = turf.lineString([
+      [latLng.lng, -90],
+      [latLng.lng, 90],
+    ]);
+
+    return [horizontalLine, verticalLine];
+  }
+
+  public static clipFeatures(lines: turf.Feature[], clipPolygon: PolygonLike): turf.Feature[] {
+    let polygonFeature: PolygonFeature;
+    if (clipPolygon.type === 'Feature') {
+      polygonFeature = clipPolygon as PolygonFeature;
+    } else {
+      polygonFeature = turf.feature(clipPolygon) as PolygonFeature;
+    }
+
+    const clippedLines: turf.Feature[] = [];
+
+    lines.forEach((line) => {
+      const intersection = turf.lineIntersect(line, polygonFeature);
+
+      if (intersection) {
+        if (intersection.type === 'FeatureCollection') {
+          const coords = intersection.features.map(f => f.geometry.coordinates);
+          clippedLines.push(turf.lineString(coords));
+        }
+      }
+    });
+
+    return clippedLines;
   }
 }
 
