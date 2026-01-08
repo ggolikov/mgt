@@ -1,5 +1,5 @@
 import { useAppStore } from './store';
-import { drawBufferFromRing, drawComparePoint } from './mapActions';
+import { drawBufferFromRing, drawComparePoint, drawReflectionPoint } from './mapActions';
 
 export function createMapOptions() {
   return {
@@ -39,8 +39,12 @@ export function createMapOptions() {
         callback: (e: any) => drawComparePoint('from', e),
       },
       {
-        text: 'Добавить точку для',
+        text: 'Добавить точку для сравнения',
         callback: (e: any) => drawComparePoint('to', e),
+      },
+      {
+        text: 'Добавить симметричную точку от центра',
+        callback: (e: any) => drawReflectionPoint(e),
       },
     ],
   };

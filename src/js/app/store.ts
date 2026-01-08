@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { FeatureCollection } from 'geojson';
-import type { RingName, ComparePoint, RingsState, ComparePointsState, CompareCirclesState } from './types';
+import type { RingName, ComparePoint, RingsState, ComparePointsState, CompareCirclesState, Layer } from './types';
 import rings from './data/rings.json';
 import { RING_NAMES } from './constants';
 import Mgt from '../mgt';
@@ -9,6 +9,7 @@ interface AppState {
   rings: RingsState;
   comparePoints: ComparePointsState;
   compareCircles: CompareCirclesState;
+  reflectionPoint: Layer;
   map: any | null;
   mgt: Mgt | null;
   
@@ -20,6 +21,7 @@ interface AppState {
   setComparePointLayer: (type: ComparePoint, layer: any) => void;
   removeComparePointLayer: (type: ComparePoint) => void;
   setCompareCirclesData: () => void;
+  setReflectionPoint: () => void;
   clearAllLayers: () => void;
 }
 
@@ -48,11 +50,15 @@ const initialCompareCirclesState: CompareCirclesState = {
   middleLine: { layer: null },
 };
 
+const initialReflectionPointState: Layer = {
+  layer: null,
+}
 
 export const useAppStore = create<AppState>((set, get) => ({
   rings: initialRingsState,
   comparePoints: initialComparePointsState,
   compareCircles: initialCompareCirclesState,
+  reflectionPoint: initialReflectionPointState,
   map: null,
   mgt: null,
 
@@ -117,6 +123,14 @@ export const useAppStore = create<AppState>((set, get) => ({
     }));
   },
 
+  setReflectionPoint: (layer) => 
+    set((state) => ({
+      reflectionPoint: {
+        ...state.reflectionPoint,
+        ...layer,
+        }
+      })),
+
   clearAllLayers: () => {
     const state = get();
     RING_NAMES.forEach((ringName) => {
@@ -141,6 +155,9 @@ export const useAppStore = create<AppState>((set, get) => ({
     if (state.compareCircles.middleLine.layer) {
       state.map.removeLayer(state.compareCircles.middleLine.layer);
     }
+    if (state.reflectionPoint.layer) {
+      state.map.removeLayer(state.reflectionPoint.layer);
+    }
 
     set((state) => ({
       rings: RING_NAMES.reduce(
@@ -152,6 +169,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       ),
       comparePoints: initialComparePointsState,
       compareCircles: initialCompareCirclesState,
+      reflectionPoint: initialReflectionPointState,
     }));
   },
 }));

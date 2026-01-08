@@ -15,20 +15,14 @@ export interface RingStateItem {
   layer: any | null;
 }
 
-export interface ComparePointsStateItem {
+export type Layer = {
   layer: any | null;
 }
 
 export type RingsState = Record<RingName, RingStateItem>;
-export type ComparePointsState = Record<ComparePoint, ComparePointsStateItem>;
+export type ComparePointsState = Record<ComparePoint, Layer>;
 export type CompareCirclesState = {
-  straight: {
-    layer: any | null;
-  };
-  reverse: {
-    layer: any | null;
-  };
-  middleLine: {
-    layer: any | null;
-  }
+  straight: Layer;
+  reverse: Layer;
+  middleLine: Layer;
 };

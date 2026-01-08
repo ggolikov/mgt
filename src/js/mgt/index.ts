@@ -113,6 +113,17 @@ export default class Mgt {
     return [straight, reverse];
   }
 
+  public static getReflectionPoint(latLng: LatLngLike, origin: LatLngLike): LatLngLike {
+    // Calculate symmetrical point: P' = 2*O - P
+    // Where O is origin and P is the point to reflect
+    const symmetricalLng = 2 * origin.lng - latLng.lng;
+    const symmetricalLat = 2 * origin.lat - latLng.lat;
+
+    return {
+      lat: symmetricalLat,
+      lng: symmetricalLng,
+    }
+  }
 }
 
 

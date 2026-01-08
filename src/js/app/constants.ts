@@ -8,8 +8,8 @@ export const RING_NAMES: RingName[] = [
   'Third Transport Ring',
   'MKAD',
 ];
-
-export const MAP_CENTER: [number, number] = [55.755864, 37.617698];
+export const MOSCOW_CENTER: [number, number] = [55.753697, 37.619925];
+export const MAP_CENTER: [number, number] = MOSCOW_CENTER;
 export const MAP_ZOOM = 12;
 
 export const TILE_URLS: string[] = [

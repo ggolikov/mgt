@@ -2,6 +2,7 @@ import type { RingName, ComparePoint } from './types';
 import { useAppStore } from './store';
 import { getStrokeColor, BASE_STYLE, CIRCLE_COLOR } from './styles';
 import { LatLngLike } from '../mgt';
+import { MOSCOW_CENTER } from './constants';
 
 declare const L: any;
 
@@ -34,14 +35,18 @@ export function drawBufferFromRing(
 }
 
 export function drawComparePoint(
-  type: ComparePoint,
-  e: { latlng: { lat: number; lng: number } },
+    type: ComparePoint,
+    e: { latlng: { lat: number; lng: number } },
 ): void {
     const store = useAppStore.getState();
     const existingLayer = store.comparePoints[type].layer;
 
-    if (existingLayer || !store.map) {
+    if (!store.map) {
         return;
+    }
+
+    if (existingLayer) {
+        store.map.removeLayer(existingLayer);
     }
 
     const layer = L.marker([e.latlng.lat, e.latlng.lng]).addTo(store.map);
@@ -53,12 +58,9 @@ export function drawComparePoint(
     if (type === 'from') {
         from = e.latlng;
         to = store.comparePoints['to'].layer?.getLatLng();
-
-        console.log(to);
     } else {
         from = store.comparePoints['from'].layer?.getLatLng();
         to = e.latlng;
-        console.log(from);
     }
 
     if (from && to) {
@@ -90,5 +92,14 @@ export function drawComparePoint(
 
         store.setCompareCirclesData(layers);
     }
+}
 
+export function drawReflectionPoint(e: { latlng: { lat: number; lng: number } }): void {
+    const store = useAppStore.getState();
+
+    const reflectionPoint = store.mgt.getReflectionPoint(e.latlng, L.latLng(MOSCOW_CENTER));
+    
+    const layer = L.marker([reflectionPoint.lat, reflectionPoint.lng]).addTo(store.map);
+
+    store.setReflectionPoint(layer);
 }
