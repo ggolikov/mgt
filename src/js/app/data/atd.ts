@@ -1,6 +1,6 @@
 import type { FeatureCollection } from 'geojson';
 
-const atd: FeatureCollection = {
+export const atd: FeatureCollection = {
 	type: 'FeatureCollection',
 	features: [
 		{

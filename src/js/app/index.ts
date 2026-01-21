@@ -1,4 +1,5 @@
 import rings from './data/rings.json';
+import { atd } from './data/atd';
 import { useAppStore } from './store';
 import { MAP_CENTER, MAP_ZOOM, TILE_URLS } from './constants';
 import { BASE_STYLE, getStrokeColor } from './styles';
@@ -22,6 +23,20 @@ const baseLayer = L.tileLayer(TILE_URLS[1], {
 // Set map and mgt in store
 useAppStore.getState().setMap(map);
 useAppStore.getState().setMgt(Mgt);
+
+
+L.geoJson(atd, {
+  style: (feature: any) => ({
+    ...BASE_STYLE,
+    // сolor: '#FF0000',
+    strokeColor: '#FF0000',
+    opacity: 0.33,
+    weight: 4,
+    // dashArray: '10',
+    // dashOffset: '10',
+    // fillRule: 'evenodd',
+  }),
+}).addTo(map);
 
 L.geoJson(rings, {
   style: (feature: any) => ({
