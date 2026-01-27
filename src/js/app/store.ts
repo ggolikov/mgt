@@ -11,6 +11,7 @@ interface AppState {
   compareCircles: CompareCirclesState;
   reflectionPoint: Layer;
   crossLines: CrossLinesState;
+  centerLine: Layer;
   map: any | null;
   mgt: Mgt | null;
   
@@ -22,8 +23,10 @@ interface AppState {
   setComparePointLayer: (type: ComparePoint, layer: any) => void;
   removeComparePointLayer: (type: ComparePoint) => void;
   setCompareCirclesData: (layers: any) => void;
-  setReflectionPoint: () => void;
+  setReflectionPoint: (layer: any) => void;
   setCrossLines: (layers: any) => void;
+  setCenterLine: (layer: any) => void;
+  removeCenterLine: () => void;
   clearAllLayers: () => void;
 }
 
@@ -61,12 +64,17 @@ const initialCrossLinesState: CrossLinesState = {
   meridian: { layer: null },
 }
 
+const initialCenterLineState: Layer = {
+  layer: null,
+}
+
 export const useAppStore = create<AppState>((set, get) => ({
   rings: initialRingsState,
   comparePoints: initialComparePointsState,
   compareCircles: initialCompareCirclesState,
   reflectionPoint: initialReflectionPointState,
   crossLines: initialCrossLinesState,
+  centerLine: initialCenterLineState,
   map: null,
   mgt: null,
 
@@ -139,6 +147,25 @@ export const useAppStore = create<AppState>((set, get) => ({
         }
     })),
   
+  
+  setCenterLine: (layer) => 
+    set((state) => ({
+      centerLine: {
+        ...state.centerLine,
+        ...layer,
+        }
+    })),
+  
+  removeCenterLine: () => {
+    const state = get();
+    if (state.centerLine.layer) {
+      state.map.removeLayer(state.centerLine.layer);
+    }
+    set((state) => ({
+      centerLine: initialCenterLineState,
+    }));
+  },
+  
   setCrossLines: (layers) => 
       set((state) => ({
         crossLines: {
@@ -174,6 +201,9 @@ export const useAppStore = create<AppState>((set, get) => ({
     if (state.reflectionPoint.layer) {
       state.map.removeLayer(state.reflectionPoint.layer);
     }
+    if (state.centerLine.layer) {
+      state.map.removeLayer(state.centerLine.layer);
+    }
     if (state.crossLines.parallel.layer) {
       state.map.removeLayer(state.crossLines.parallel.layer);
     }
@@ -193,6 +223,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       compareCircles: initialCompareCirclesState,
       reflectionPoint: initialReflectionPointState,
       crossLines: initialCrossLinesState,
+      centerLine: initialCenterLineState,
     }));
   },
 }));

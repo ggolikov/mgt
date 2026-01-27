@@ -162,3 +162,29 @@ export function drawCrossLines(e: { latlng: { lat: number; lng: number } }): voi
 
     store.setCrossLines(layers);
 }
+
+export function drawCenterLine(e: { latlng: { lat: number; lng: number } }): void {
+    const store = useAppStore.getState();
+
+
+  if (store.centerLine.layer) {
+    store.removeCenterLine();
+  }
+
+
+    const mkad = (rings as FeatureCollection).features?.find(
+        (f) => f.properties && f.properties.name === 'MKAD',
+    );
+    
+    const centerLine = Mgt.clipFeatures([Mgt.getCenterLine(e.latlng)], mkad)[0];
+
+    const layer = L.geoJson(centerLine, {
+        style: () => ({
+            ...BASE_STYLE,
+            color: CIRCLE_COLOR,
+            dashArray: '10',
+        }),
+    });
+    store.setCenterLine({ layer });
+    layer.addTo(store.map);
+}

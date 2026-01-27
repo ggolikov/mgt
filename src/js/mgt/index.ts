@@ -1,5 +1,6 @@
 import * as turf from '@turf/turf';
 import type { Feature, MultiPolygon, Polygon } from 'geojson';
+import { MOSCOW_CENTER } from '../app/constants';
 
 type PolygonGeometry = Polygon | MultiPolygon;
 type PolygonFeature = Feature<PolygonGeometry>;
@@ -167,6 +168,77 @@ export default class Mgt {
     });
 
     return clippedLines;
+  }
+
+  public static getCenterLine(latLng: LatLngLike): turf.Feature {
+    const p1 = [latLng.lng, latLng.lat] as [number, number];
+    const p2 = [MOSCOW_CENTER[1], MOSCOW_CENTER[0]] as [number, number];
+    
+    // Calculate line equation: y = mx + b or x = constant for vertical lines
+    const dx = p2[0] - p1[0];
+    const dy = p2[1] - p1[1];
+    
+    const intersections: [number, number][] = [];
+    
+    if (Math.abs(dx) < 1e-10) {
+      // Vertical line: x = constant
+      const x = p1[0];
+      intersections.push([x, -90], [x, 90]);
+    } else {
+      // Calculate slope and intercept
+      const m = dy / dx;
+      const b = p1[1] - m * p1[0];
+      
+      // Find intersections with world boundaries
+      // Left boundary (x = -180)
+      const yLeft = m * -180 + b;
+      if (yLeft >= -90 && yLeft <= 90) {
+        intersections.push([-180, yLeft]);
+      }
+      
+      // Right boundary (x = 180)
+      const yRight = m * 180 + b;
+      if (yRight >= -90 && yRight <= 90) {
+        intersections.push([180, yRight]);
+      }
+      
+      // Bottom boundary (y = -90)
+      const xBottom = (-90 - b) / m;
+      if (xBottom >= -180 && xBottom <= 180) {
+        intersections.push([xBottom, -90]);
+      }
+      
+      // Top boundary (y = 90)
+      const xTop = (90 - b) / m;
+      if (xTop >= -180 && xTop <= 180) {
+        intersections.push([xTop, 90]);
+      }
+    }
+    
+    // Use the two points that are furthest apart
+    if (intersections.length >= 2) {
+      let maxDist = 0;
+      let bestPair: [[number, number], [number, number]] = [intersections[0], intersections[1]];
+      
+      for (let i = 0; i < intersections.length; i++) {
+        for (let j = i + 1; j < intersections.length; j++) {
+          const dist = turf.distance(
+            turf.point(intersections[i]),
+            turf.point(intersections[j]),
+            { units: 'kilometers' }
+          );
+          if (dist > maxDist) {
+            maxDist = dist;
+            bestPair = [intersections[i], intersections[j]];
+          }
+        }
+      }
+      
+      return turf.lineString(bestPair);
+    }
+    
+    // Fallback: return line between the two points
+    return turf.lineString([p1, p2]);
   }
 }
 
