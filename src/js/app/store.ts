@@ -12,6 +12,7 @@ interface AppState {
   reflectionPoint: Layer;
   crossLines: CrossLinesState;
   centerLine: Layer;
+  pointsLine: Layer;
   map: any | null;
   mgt: Mgt | null;
   
@@ -27,6 +28,8 @@ interface AppState {
   setCrossLines: (layers: any) => void;
   setCenterLine: (layer: any) => void;
   removeCenterLine: () => void;
+  setPointsLine: (layer: any) => void;
+  removePointsLine: () => void;
   clearAllLayers: () => void;
 }
 
@@ -68,6 +71,10 @@ const initialCenterLineState: Layer = {
   layer: null,
 }
 
+const initialPointsLineState: Layer = {
+  layer: null,
+}
+
 export const useAppStore = create<AppState>((set, get) => ({
   rings: initialRingsState,
   comparePoints: initialComparePointsState,
@@ -75,6 +82,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   reflectionPoint: initialReflectionPointState,
   crossLines: initialCrossLinesState,
   centerLine: initialCenterLineState,
+  pointsLine: initialPointsLineState,
   map: null,
   mgt: null,
 
@@ -165,7 +173,25 @@ export const useAppStore = create<AppState>((set, get) => ({
       centerLine: initialCenterLineState,
     }));
   },
+
+  setPointsLine: (layer) => 
+    set((state) => ({
+      pointsLine: {
+        ...state.pointsLine,
+        ...layer,
+        }
+    })),
   
+  removePointsLine: () => {
+    const state = get();
+    if (state.pointsLine.layer) {
+      state.map.removeLayer(state.pointsLine.layer);
+    }
+    set((state) => ({
+      pointsLine: initialPointsLineState,
+    }));
+  },
+
   setCrossLines: (layers) => 
       set((state) => ({
         crossLines: {
@@ -203,6 +229,9 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
     if (state.centerLine.layer) {
       state.map.removeLayer(state.centerLine.layer);
+    }
+    if (state.pointsLine.layer) {
+      state.map.removeLayer(state.pointsLine.layer);
     }
     if (state.crossLines.parallel.layer) {
       state.map.removeLayer(state.crossLines.parallel.layer);

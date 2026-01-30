@@ -53,17 +53,12 @@ export function drawComparePoint(
 
     const layer = L.marker([e.latlng.lat, e.latlng.lng]).addTo(store.map);
     store.setComparePointLayer(type, layer);
-    
-    let from: LatLngLike | null = null;
-    let to: LatLngLike | null = null;
+}
 
-    if (type === 'from') {
-        from = e.latlng;
-        to = store.comparePoints['to'].layer?.getLatLng();
-    } else {
-        from = store.comparePoints['from'].layer?.getLatLng();
-        to = e.latlng;
-    }
+export function drawPointsComparison() {
+    const store = useAppStore.getState();
+    let from: LatLngLike | null = store.comparePoints['from'].layer?.getLatLng();
+    let to: LatLngLike | null = store.comparePoints['to'].layer?.getLatLng();
 
     if (from && to) {
         const features = Mgt.getTwoPointsCircles(from, to);
@@ -176,7 +171,9 @@ export function drawCenterLine(e: { latlng: { lat: number; lng: number } }): voi
         (f) => f.properties && f.properties.name === 'MKAD',
     );
     
-    const centerLine = Mgt.clipFeatures([Mgt.getCenterLine(e.latlng)], mkad)[0];
+    const centerLatLng = L.latLng(MOSCOW_CENTER);
+
+    const centerLine = Mgt.clipFeatures([Mgt.getLineBetweenPoints(e.latlng, centerLatLng)], mkad)[0];
 
     const layer = L.geoJson(centerLine, {
         style: () => ({
@@ -188,3 +185,33 @@ export function drawCenterLine(e: { latlng: { lat: number; lng: number } }): voi
     store.setCenterLine({ layer });
     layer.addTo(store.map);
 }
+
+
+export function drawPointsLine(): void {
+    const store = useAppStore.getState();
+
+    store.removePointsLine();
+
+    if (store.comparePoints.from.layer && store.comparePoints.to.layer) {
+      const fromLatLng = store.comparePoints.from.layer.getLatLng();
+        const toLatLng = store.comparePoints.to.layer.getLatLng();
+        
+
+    const mkad = (rings as FeatureCollection).features?.find(
+        (f) => f.properties && f.properties.name === 'MKAD',
+    );
+    
+    const pointsLine = Mgt.clipFeatures([Mgt.getLineBetweenPoints(fromLatLng, toLatLng)], mkad)[0];
+
+    const layer = L.geoJson(pointsLine, {
+        style: () => ({
+          ...BASE_STYLE,
+          color: CIRCLE_COLOR,
+          dashArray: '10',
+        }),
+      });
+    
+     store.setPointsLine({ layer });
+    layer.addTo(store.map);
+    }
+  }

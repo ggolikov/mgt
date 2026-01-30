@@ -170,9 +170,9 @@ export default class Mgt {
     return clippedLines;
   }
 
-  public static getCenterLine(latLng: LatLngLike): turf.Feature {
+  public static getLineBetweenPoints(latLng: LatLngLike, origin: LatLngLike): turf.Feature {
     const p1 = [latLng.lng, latLng.lat] as [number, number];
-    const p2 = [MOSCOW_CENTER[1], MOSCOW_CENTER[0]] as [number, number];
+    const p2 = [origin.lng, origin.lat] as [number, number];
     
     // Calculate line equation: y = mx + b or x = constant for vertical lines
     const dx = p2[0] - p1[0];
