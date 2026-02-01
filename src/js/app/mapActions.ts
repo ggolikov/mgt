@@ -203,6 +203,7 @@ export function drawPointsLine(): void {
     
     const pointsLine = Mgt.clipFeatures([Mgt.getLineBetweenPoints(fromLatLng, toLatLng)], mkad)[0];
 
+
     const layer = L.geoJson(pointsLine, {
         style: () => ({
           ...BASE_STYLE,
@@ -214,4 +215,25 @@ export function drawPointsLine(): void {
      store.setPointsLine({ layer });
     layer.addTo(store.map);
     }
-  }
+}
+  
+export function drawAzimuths(): void {
+    const store = useAppStore.getState();
+
+    const azimuths = Mgt.getAzimuths();
+
+    const layers = {
+        azimuths: {
+            layer: L.geoJson(azimuths, {
+                style: () => ({
+                    ...BASE_STYLE,
+                    color: CIRCLE_COLOR,
+                    dashArray: '10',
+                }),
+            }),
+        }
+    };
+
+    layers.azimuths.layer.addTo(store.map);
+    store.setAzimuths(layers);
+}

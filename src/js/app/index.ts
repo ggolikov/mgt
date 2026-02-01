@@ -47,10 +47,3 @@ L.geoJson(rings, {
 
 map.addLayer(baseLayer);
 
-// Expose to window for debugging
-(window as any).map = map;
-(window as any).mgt = mgt;
-(window as any).store = useAppStore;
-
-// eslint-disable-next-line no-console
-console.log(mgt);

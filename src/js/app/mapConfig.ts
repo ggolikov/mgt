@@ -1,5 +1,5 @@
 import { useAppStore } from './store';
-import { drawBufferFromRing, drawComparePoint, drawCrossLines, drawReflectionPoint, drawCenterLine, drawPointsLine, drawPointsComparison } from './mapActions';
+import { drawBufferFromRing, drawComparePoint, drawCrossLines, drawReflectionPoint, drawCenterLine, drawPointsLine, drawPointsComparison, drawAzimuths } from './mapActions';
 
 export function createMapOptions() {
   return {
@@ -61,6 +61,10 @@ export function createMapOptions() {
       {
         text: 'Добавить линию между точками',
         callback: () => drawPointsLine(),
+      },
+      {
+        text: 'Добавить азимуты',
+        callback: () => drawAzimuths(),
       },
     ],
   };

@@ -111,12 +111,7 @@ export default class Mgt {
     const intersection = turf.lineIntersect(straight, reverse);
 
     const middleLine = turf.lineString(intersection.features.map(f => f.geometry.coordinates));
-    
-    console.log(middleLine);
-    
 
-    // TODO: Draw middle line
-    // const intersection = turf.
 
     return [straight, reverse, middleLine];
   }
@@ -239,6 +234,22 @@ export default class Mgt {
     
     // Fallback: return line between the two points
     return turf.lineString([p1, p2]);
+  }
+
+  public static getAzimuths(): turf.FeatureCollection<turf.LineString> {
+    const azimuths = [22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5];
+    const centerPoint = turf.point([MOSCOW_CENTER[1], MOSCOW_CENTER[0]]); // [lng, lat]
+    const distance = 3000; // kilometers - large enough to be visible on map
+    
+    const lineStrings: turf.Feature<turf.LineString>[] = azimuths.map((bearing) => {
+      const destination = turf.destination(centerPoint, distance, bearing, { units: 'kilometers' });
+      return turf.lineString([
+        centerPoint.geometry.coordinates,
+        destination.geometry.coordinates,
+      ]);
+    });
+
+    return turf.featureCollection(lineStrings);
   }
 }
 

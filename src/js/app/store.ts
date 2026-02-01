@@ -13,6 +13,7 @@ interface AppState {
   crossLines: CrossLinesState;
   centerLine: Layer;
   pointsLine: Layer;
+  azimuths: Layer;
   map: any | null;
   mgt: Mgt | null;
   
@@ -30,6 +31,8 @@ interface AppState {
   removeCenterLine: () => void;
   setPointsLine: (layer: any) => void;
   removePointsLine: () => void;
+  setAzimuths: (layer: any) => void;
+  removeAzimuths: () => void;
   clearAllLayers: () => void;
 }
 
@@ -75,6 +78,10 @@ const initialPointsLineState: Layer = {
   layer: null,
 }
 
+const initialAzimuthsState: Layer = {
+  layer: null,
+}
+
 export const useAppStore = create<AppState>((set, get) => ({
   rings: initialRingsState,
   comparePoints: initialComparePointsState,
@@ -83,6 +90,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   crossLines: initialCrossLinesState,
   centerLine: initialCenterLineState,
   pointsLine: initialPointsLineState,
+  azimuths: initialAzimuthsState,
   map: null,
   mgt: null,
 
@@ -198,7 +206,25 @@ export const useAppStore = create<AppState>((set, get) => ({
           ...state.crossLines,
           ...layers,
           }
-        })),
+      })),
+  
+  setAzimuths: (layer) => 
+    set((state) => ({
+      azimuths: {
+        ...state.azimuths,
+        ...layer,
+        }
+    })),
+  
+  removeAzimuths: () => {
+    const state = get();
+    if (state.azimuths.layer) {
+      state.map.removeLayer(state.azimuths.layer);
+    }
+    set((state) => ({
+      azimuths: initialAzimuthsState,
+    }));
+  },
 
   clearAllLayers: () => {
     const state = get();
@@ -238,6 +264,9 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
     if (state.crossLines.meridian.layer) {
       state.map.removeLayer(state.crossLines.meridian.layer);
+    }
+    if (state.azimuths.layer) {
+      state.map.removeLayer(state.azimuths.layer);
     }
 
     set((state) => ({
