@@ -239,7 +239,7 @@ export default class Mgt {
   public static getAzimuths(): turf.FeatureCollection<turf.LineString> {
     const azimuths = [22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5];
     const centerPoint = turf.point([MOSCOW_CENTER[1], MOSCOW_CENTER[0]]); // [lng, lat]
-    const distance = 3000; // kilometers - large enough to be visible on map
+    const distance = 100; // kilometers - large enough to be visible on map
     
     const lineStrings: turf.Feature<turf.LineString>[] = azimuths.map((bearing) => {
       const destination = turf.destination(centerPoint, distance, bearing, { units: 'kilometers' });
