@@ -217,10 +217,10 @@ export function drawPointsLine(): void {
     }
 }
   
-export function drawAzimuths(): void {
+export function drawAzimuths(azimuthsArray: number[]): void {
     const store = useAppStore.getState();
 
-    const azimuths = Mgt.getAzimuths();
+    const azimuths = Mgt.getAzimuths(azimuthsArray);
 
     const layers = {
         azimuths: {

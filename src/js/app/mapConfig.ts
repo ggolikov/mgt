@@ -63,8 +63,12 @@ export function createMapOptions() {
         callback: () => drawPointsLine(),
       },
       {
-        text: 'Добавить азимуты',
-        callback: () => drawAzimuths(),
+        text: 'Добавить азимуты 22.5',
+        callback: () => drawAzimuths([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5]),
+      },
+      {
+        text: 'Добавить азимуты 45',
+        callback: () => drawAzimuths([45, 135, 225, 315]),
       },
     ],
   };
